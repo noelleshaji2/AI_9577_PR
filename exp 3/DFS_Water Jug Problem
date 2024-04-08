@@ -1,0 +1,66 @@
+#Waterjug DFS
+def dfs(x, y, visited, path, m, n, d):
+    if visited[x][y]:
+        return False
+
+    visited[x][y] = True
+
+    if x == d or y == d:
+        path.append((x, y))
+        return True
+
+    # Empty Jug 1
+    if dfs(0, y, visited, path, m, n, d):
+        path.append((x, y))
+        print(f"Empty Jug 1 : ({x}, {y})")
+        return True
+
+    # Empty Jug 2
+    if dfs(x, 0, visited, path, m, n, d):
+        path.append((x, y))
+        print(f"Empty Jug 1 : ({x}, {y})")
+        return True
+
+    # Fill Jug 1
+    if dfs(m, y, visited, path, m, n, d):
+        path.append((x, y))
+        print(f"Empty Jug 1 : ({x}, {y})")
+        return True
+
+    # Fill Jug 2
+    if dfs(x, n, visited, path, m, n, d):
+        path.append((x, y))
+        print(f"Empty Jug 1 : ({x}, {y})")
+        return True
+
+    # Pour water from Jug 1 to Jug 2
+    pour = min(x, n - y)
+    if dfs(x - pour, y + pour, visited, path, m, n, d):
+        path.append((x, y))
+        return True
+
+    # Pour water from Jug 2 to Jug 1
+    pour = min(y, m - x)
+    if dfs(x + pour, y - pour, visited, path, m, n, d):
+        path.append((x, y))
+        return True
+
+    return False
+
+def water_jug_dfs(m, n, d):
+    visited = [[False] * (n + 1) for _ in range(m + 1)]
+    path = []
+
+    if dfs(0, 0, visited, path, m, n, d):
+        path.reverse()
+        return path
+    else:
+        return "No"
+
+# Example usage:
+m = 4  # capacity of Jug 1
+n = 3  # capacity of Jug 2
+d = 2  # desired liters of water
+
+result = water_jug_dfs(m, n, d)
+print(result)
