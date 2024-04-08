@@ -1,0 +1,62 @@
+from collections import deque
+
+class State:
+    def __init__(self, left_m, left_c, boat, right_m, right_c):
+        self.left_m = left_m
+        self.left_c = left_c
+        self.boat = boat
+        self.right_m = right_m
+        self.right_c = right_c
+
+    def is_valid(self):
+        # Check if the state is valid (no missionaries eaten)
+        return (self.left_m == 0 or self.left_m >= self.left_c) and \
+               (self.right_m == 0 or self.right_m >= self.right_c)
+
+    def is_goal(self):
+        # Check if the state is the goal state
+        return self.left_m == 0 and self.left_c == 0
+
+    def __str__(self):
+        return f"Left: {self.left_m}M {self.left_c}C Boat: {self.boat} Right: {self.right_m}M {self.right_c}C"
+
+def move(state, m, c):
+    if state.boat == 'left':
+        return State(state.left_m - m, state.left_c - c, 'right', state.right_m + m, state.right_c + c)
+    else:
+        return State(state.left_m + m, state.left_c + c, 'left', state.right_m - m, state.right_c - c)
+
+def bfs():
+    initial_state = State(3, 3, 'left', 0, 0)
+    visited_states = set()
+    queue = deque([initial_state])
+
+    while queue:
+        current_state = queue.popleft()
+
+        if current_state.is_goal():
+            path = []
+            while current_state:
+                path.append(current_state)
+                current_state = current_state.parent
+            path.reverse()
+            print("Solution found:")
+            for step, state in enumerate(path):
+                print(f"Step {step + 1}: {state}")
+            return True
+
+        visited_states.add(str(current_state))
+
+        for m, c in [(0, 1), (1, 0), (1, 1), (2, 0), (0, 2)]:
+            next_state = move(current_state, m, c)
+
+            if next_state.is_valid() and str(next_state) not in visited_states:
+                next_state.parent = current_state
+                queue.append(next_state)
+
+    print("No solution found.")
+    return False
+
+if __name__ == "__main__":
+    bfs()
+        
